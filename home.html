@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="initApp()">
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-wallet"></i>
+                    <span>Finance Tracker</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="tab-link active" data-tab="dashboard">Dashboard</a></li>
+                        <li><a href="#" class="tab-link" data-tab="transactions">Transactions</a></li>
+                        <li><a href="#" class="tab-link" data-tab="goals">Goals</a></li>
+                        <li><a href="#" class="tab-link" data-tab="anal">Analytics</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="tab-container">
+            <div id="dashboard" class="tab-content active">
+                <div class="dashboard-overview">
+                    <div class="stat-card income">
+                        <i class="fas fa-arrow-circle-up"></i>
+                        <div class="stat-title">Total Income</div>
+                        <div class="stat-value"><span class="currency"></span><span id="totalIncome">0.00</span></div>
+                    </div>
+                    <div class="stat-card expenses">
+                        <i class="fas fa-arrow-circle-down"></i>
+                        <div class="stat-title">Total Expenses</div>
+                        <div class="stat-value"><span class="currency"></span><span id="totalExpenses">0.00</span></div>
+                    </div>
+                    <div class="stat-card balance">
+                        <i class="fas fa-balance-scale"></i>
+                        <div class="stat-title">Current Balance</div>
+                        <div class="stat-value"><span class="currency"></span><span id="currentBalance">0.00</span></div>
+                    </div>
+                </div>
+                <div class="data-container">
+                    <div class="section-title">
+                        Recent Transactions
+                        <button class="btn btn-primary" onclick="openAddTransactionModal()">Add Transaction</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentTransactionsList"></tbody>
+                    </table>
+                </div>
+                <div class="data-container">
+                    <div class="section-title">Expense Breakdown</div>
+                    <canvas id="expenseChart"></canvas>
+                </div>
+            </div>
+
+            <div id="transactions" class="tab-content">
+                <div class="data-container">
+                    <div class="section-title">
+                        All Transactions
+                        <button class="btn btn-primary" onclick="openAddTransactionModal()">Add Transaction</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionList"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="goals" class="tab-content">
+                <div class="data-container">
+                    <div class="section-title">
+                        Saving Goals
+                        <button class="btn btn-primary" onclick="openAddGoalModal()">Add Goal</button>
+                    </div>
+                    <div id="savingGoalsList"></div>
+                </div>
+            </div>
+
+            <div id="analytics" class="tab-content">
+                <div class="data-container">
+                    <div class="section-title">Monthly Expenses</div>
+                    <canvas id="monthlyExpensesChart"></canvas>
+                </div>
+                <div class="data-container">
+                    <div class="section-title">Category Breakdown</div>
+                    <canvas id="categoryBreakdown"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addTransactionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Add Transaction</div>
+                <button class="modal-close" onclick="closeAddTransactionModal()">×</button>
+            </div>
+            <form id="transactionForm" onsubmit="addTransaction(); return false;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="transactionDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="expenseType" name="transactionType" value="expense" checked>
+                                <label for="expenseType">Expense</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="incomeType" name="transactionType" value="income">
+                                <label for="incomeType">Income</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" id="transactionDescription" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="transactionCategory" class="form-control" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (₹)</label>
+                        <input type="number" id="transactionAmount" class="form-control" min="0.01" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="addGoalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Add Goal</div>
+                <button class="modal-close" onclick="closeAddGoalModal()">×</button>
+            </div>
+            <form id="goalForm" onsubmit="addSavingGoal(); return false;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="goalName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Target (₹)</label>
+                        <input type="number" id="goalAmount" class="form-control" min="1" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Deadline</label>
+                        <input type="date" id="goalDeadline" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="updateGoalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Update Goal</div>
+                <button class="modal-close" onclick="closeUpdateGoalModal()">×</button>
+            </div>
+            <form id="updateGoalForm" onsubmit="submitGoalUpdate(); return false;">
+                <input type="hidden" id="updateGoalId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Add Amount (₹)</label>
+                        <input type="number" id="updateGoalAmount" class="form-control" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 Finance Tracker</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="scripts.js"></script>
+</body>
+</html>

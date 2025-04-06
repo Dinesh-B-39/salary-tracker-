@@ -69,6 +69,7 @@ nav ul li a.active {
 
 .tab-content {
     display: none;
+    flex:1;
 }
 
 .tab-content.active {
